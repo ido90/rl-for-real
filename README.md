@@ -73,9 +73,10 @@ to train Qwen2.5-3B-Instruct to solve several reasoning tasks (`number_filtering
 
 Using `config/multi_tasks.yaml` as provided should train for ~40min, providing meaningful feedback on wandb after ~20min.
 
-#### Task
+#### Tasks
 
-Try to improve Qwen's training and achieve the best evaluation scores you can.
+* **Main:** Try to improve Qwen2.5-3B-Instruct and achieve the best evaluation scores you can - on the same evaluation tasks specified in `config/multi_tasks.yaml`.
+* **Freestyle:** Experiment with different tasks, models, problem constraints, etc.
 
 #### Potential directions
 
