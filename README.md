@@ -71,7 +71,7 @@ python train_grpo.py --config config/multi_tasks.yaml
 ```
 to train Qwen2.5-3B-Instruct to solve several reasoning tasks (`number_filtering`, `string_insertion`, `family_relationships`, `maze`) and test on the same tasks as well as the additional task of `base_conversion`.
 
-Using `config/multi_tasks.yaml` as provided should train for ~40min, providing meaningful feedback on wandb after ~20min.
+Using `config/multi_tasks.yaml` as provided should train for ~40min, with meaningful feedback available on wandb ~20min after training begins.
 
 #### Tasks
 
