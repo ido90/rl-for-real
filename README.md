@@ -71,7 +71,7 @@ python train_grpo.py --config config/multi_tasks.yaml
 ```
 to train Qwen2.5-3B-Instruct to solve several reasoning tasks (`number_filtering`, `string_insertion`, `family_relationships`, `maze`) and test on the same tasks as well as the additional task of `base_conversion`.
 
-Using `config/multi_tasks.yaml` as provided should result in ~40min training.
+Using `config/multi_tasks.yaml` as provided should train for ~40min, providing meaningful feedback on wandb after ~20min.
 
 #### Task
 
@@ -81,10 +81,12 @@ Try to improve Qwen's training and achieve the best evaluation scores you can.
 
 You may take whichever approach you like to improve the results.
 Below are several ideas.
-1. Consider hyper-parameters in `config/multi_tasks.yaml`, specifically under the section titles `Training steps`, `Batch sizes`, `Learning rate`, `GRPO-specific`, `Model behavior`, `LORA`. Can you tell what each hyper-parameter does? Which ones do you expect to have the largest effects on training?
-2. What is the GPU utilization under the current training? Which hyper-parameters can be used to increase it, if needed?
-3. The function `_format_reward()` in `trainer.py` defines the reward for answer format correctness, and is summed with `_accuracy_reward()`. Currently, each of the two functions returns a reward component of the same scale, in `[0,1]`. Is this the right balance? Consider the logic and scale of `_format_reward()` in light of the training curves.
-4. Extended coding:
+1. **Reward shaping:** The default reward consists of the raw score of Reasoning-Gym and . Can you suggest more useful rewards? You may modify `_accuracy_reward()` and `_format_reward()` in `trainer.py`, or their relative `reward_weights` in `multi_tasks.yaml`.
+    * Note: some parameters are passed to TRL or Reasoning-Gym, whereas others are used directly.
+2. **Hyper-parameters:** Consider hyper-parameters in `config/multi_tasks.yaml`, specifically under the section titles `Training steps`, `Batch sizes`, `Learning rate`, `GRPO-specific`, `Model behavior`, `LORA`. Can you tell what each hyper-parameter does? You will probably not have time to experiment with all of them, but can you guess which ones have the largest effect on training?
+3. **Development cycles**: Can you shorten the feedback-loop for more extensive experimentation? The default configuration trains for 200 iterations and evaluates every 100 iterations, with full-model fine-tuning.
+4. **GPU utilization:** What is the GPU utilization under the current training? Which hyper-parameters can be used to increase it, if needed?
+5. **Extended:**
     * Try using TRL's KL-regularization. Notice that it restricts the model updates with respect to the *original* model weights ("global" regularization). Modify the regularization to be "local": every update, restrict the new model with respect to the *current* model, not the original one.
     * TRL uses [`get_off_policy_mask()`](https://github.com/huggingface/trl/blob/main/trl/trainer/grpo_trainer.py#L1929) to remove training examples that are both non-beneficial (advantage<0) and off-policy (KL>threshold). Consider changing the threshold (`off_policy_threshold`) to extend or focus the scope of the train data.
     * Implement an actor-critic training framework.
@@ -94,7 +96,7 @@ Below are several ideas.
 | Model | VRAM Needed |
 |-------|-------------|
 | Qwen2.5-1.5B-Instruct | 16GB |
-| Qwen2.5-3B-Instruct | Minimal: 24GB; Recommended: 40GB |
+| Qwen2.5-3B-Instruct | Minimal: 24GB; Recommended: 40GB; Best: 80GB |
 
 Reduce batch size (`per_device_train_batch_size`), enable `lora` or enable gradient checkpointing if running low on memory.
 

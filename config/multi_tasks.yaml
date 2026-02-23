@@ -58,6 +58,9 @@ lr_scheduler_kwargs:
 
 # GRPO-specific
 num_generations: 4  # Rollouts per prompt
+reward_weights:  # Weights for [accuracy_reward, format_reward]
+  - 1.0
+  - 1.0
 max_completion_length: 384
 
 # Model behavior
